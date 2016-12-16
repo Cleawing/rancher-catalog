@@ -1,0 +1,21 @@
+redis-data:
+  image: busybox
+  labels:
+    io.rancher.container.start_once: true
+    io.rancher.container.hostname_override: container_name
+  entrypoint: /bin/true
+  net: none
+  volumes:
+  - ${volume_path}:/data
+
+redis:
+  image: redis:3.2.9
+  labels:
+    io.rancher.sidekicks: redis-data
+    io.rancher.container.hostname_override: container_name
+    io.rancher.scheduler.affinity:host_label: ${affinity_label}
+  volumes_from:
+  - redis-data
+  command:
+  - redis-server
+  - --appendonly yes

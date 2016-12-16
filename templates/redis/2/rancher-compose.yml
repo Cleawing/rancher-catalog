@@ -1,0 +1,26 @@
+.catalog:
+  name: "Redis"
+  version: "3.2.9-2"
+  description: "Redis server stack for simple one-node setup."
+  uuid: redis-3.2.9-2
+  questions:
+    - variable: "volume_path"
+      label: "Path on host for mount data volume"
+      description: Fill path on host for mounting and saving data
+      type: "string"
+      required: true
+    - variable: "affinity_label"
+      label: "Affinity label"
+      description: "Rancher Affinity label which using for scheduling"
+      type: "string"
+      required: true
+      default: "redis=enabled"
+redis:
+  retain_ip: true
+  scale: 1
+  health_check:
+    port: 6379
+    interval: 2000
+    unhealthy_threshold: 3
+    healthy_threshold: 2
+    response_timeout: 2000

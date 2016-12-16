@@ -1,0 +1,5 @@
+name: Redis
+description: |
+  Redis server stack for simple one-node setup.
+version: 3.2.9-2
+category: Database

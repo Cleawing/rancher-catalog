@@ -1,0 +1,25 @@
+postgres-data:
+  image: busybox
+  labels:
+    io.rancher.container.start_once: true
+    io.rancher.container.hostname_override: container_name
+  entrypoint: /bin/true
+  net: none
+  volumes:
+  - ${volume_path}:${db_path}
+
+postgres:
+  image: postgres:9.6.3
+  labels:
+    io.rancher.sidekicks: postgres-data
+    io.rancher.container.hostname_override: container_name
+    io.rancher.scheduler.affinity:host_label: ${affinity_label}
+  environment:
+    PGDATA: ${db_path}
+    POSTGRES_DB: ${db_name}
+    POSTGRES_USER: ${db_user}
+    POSTGRES_PASSWORD: ${db_password}
+  stdin_open: true
+  tty: true
+  volumes_from:
+  - postgres-data
