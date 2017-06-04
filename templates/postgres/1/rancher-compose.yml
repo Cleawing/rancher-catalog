@@ -1,7 +1,8 @@
 .catalog:
-  name: "PostgreSQL"
-  version: "9.6.3-1"
-  description: "PostgreSQL server stack for simple one-node setup."
+  name: PostgreSQL
+  version: 9.6.3-1
+  description: |
+    PostgreSQL server stack for simple one-node setup.
   uuid: postgres-9.6.3-1
   questions:
     - variable: affinity_label
@@ -34,24 +35,19 @@
       description: |
         Sets the superuser password for PostgreSQL. The default superuser is defined by the <<dbuser>> variable
       required: true
-    - variable: db_path
-      label: Internal database data path
-      description: |
-        This optional environment variable can be used to define another location - like a subdirectory - for the database files. The default is /var/lib/postgresql/data, but if the data volume you're using is a fs mountpoint (like with GCE persistent disks), Postgres initdb recommends a subdirectory (for example /var/lib/postgresql/data/pgdata ) be created to contain the data.
-      type: string
-      required: false
-      default: /var/lib/postgresql/data/pgdata
-    - variable: volume_path
-      label: Path on host for mount data volume
-      description: Fill path on host for mounting and saving data
-      type: string
-      required: true
-postgres:
-  retain_ip: true
-  scale: 1
-  health_check:
-    port: 5432
-    interval: 2000
-    unhealthy_threshold: 3
-    healthy_threshold: 2
-    response_timeout: 2000
+
+version: '2'
+services:
+  server:
+    start_on_create: true
+    scale: 1
+    retain_ip: true
+    health_check:
+      port: 5432
+      interval: 10000
+      unhealthy_threshold: 3
+      healthy_threshold: 2
+      response_timeout: 3000
+  data-volume:
+    start_on_create: true
+    scale: 1
