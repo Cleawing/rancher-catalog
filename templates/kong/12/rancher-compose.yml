@@ -1,9 +1,9 @@
 .catalog:
   name: Kong
-  version: 0.10.3-8
+  version: 0.10.3-12
   description: |
     The open-source API Gateway and Microservices Management Layer, delivering high performance and reliability.
-  uuid: kong-0.10.3-8
+  uuid: kong-0.10.3-12
   questions:
     - variable: affinity_label
       label: |
@@ -19,6 +19,13 @@
         Determines which hostname should be pointed to Kong Dashboard UI.
       type: string
       default: kong-dashboard
+      required: true
+    - variable: kong_dashboard_admin_name
+      label: Kond Dashboard Admin Name
+      description: |
+        Name is used for Basic Auth on Kong Dashboard
+      type: string
+      default: admin
       required: true
     - variable: kong_dashboard_admin_password
       label: Kond Dashboard Admin Password
@@ -222,29 +229,29 @@
 version: '2'
 services:
   proxy:
-    start_on_create: true
     retain_ip: true
-    health_check:
-      port: 8001
-      request_line: GET / HTTP/1.0
-      interval: 15000
-      unhealthy_threshold: 3
-      healthy_threshold: 2
-      initializing_timeout: 60000
-      response_timeout: 5000
-      strategy: recreate
-  ui:
     start_on_create: true
-    scale: 2
     health_check:
-      port: 8080
-      request_line: GET / HTTP/1.0
-      interval: 15000
-      unhealthy_threshold: 3
       healthy_threshold: 2
-      initializing_timeout: 15000
       response_timeout: 5000
+      port: 8000
+      unhealthy_threshold: 3
+      initializing_timeout: 15000
+      interval: 2000
       strategy: recreate
+      reinitializing_timeout: 15000
+  ui:
+    scale: 2
+    start_on_create: true
+    health_check:
+      healthy_threshold: 2
+      response_timeout: 5000
+      port: 8080
+      unhealthy_threshold: 3
+      initializing_timeout: 5000
+      interval: 30000
+      strategy: recreate
+      reinitializing_timeout: 5000
   lb-internal:
     start_on_create: true
     lb_config:
@@ -284,7 +291,7 @@ services:
         service: lb-internal
         source_port: 80
         target_port: 8000
-      - hostname: #{kong_dashboard_hostname}
+      - hostname: ${kong_dashboard_hostname}
         priority: 3
         protocol: http
         service: lb-internal
