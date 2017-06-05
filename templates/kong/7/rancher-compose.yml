@@ -1,9 +1,9 @@
 .catalog:
   name: Kong
-  version: 0.10.3-6
+  version: 0.10.3-7
   description: |
     The open-source API Gateway and Microservices Management Layer, delivering high performance and reliability.
-  uuid: kong-0.10.3-6
+  uuid: kong-0.10.3-7
   questions:
     - variable: affinity_label
       label: |
@@ -40,7 +40,7 @@
       type: service
       required: true
     - variable: KONG_DATABASE
-      label: Database
+      label: Database Type
       description: |
         Determines which of PostgreSQL or Cassandra this node will use as its datastore.
       type: enum
@@ -55,19 +55,19 @@
       default: kong_pg_password
       required: true
     - variable: KONG_PG_USER
-      label: PG User
+      label: Postgres User
       description: Postgres user.
       type: string
       default: kong
       required: true
     - variable: KONG_PG_DATABASE
-      label: PG Database
+      label: Postgres Database Name
       description: Database to connect to. Must exist.
       type: string
       default: kong
       required: true
     - variable: KONG_PG_PORT
-      label: PG Port
+      label: Postgres Port
       description: Port of the Postgres server.
       type: int
       default: 5432

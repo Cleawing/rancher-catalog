@@ -42,6 +42,9 @@ services:
       io.rancher.container.hostname_override: container_name
       io.rancher.scheduler.affinity:host_label: ${affinity_label}
       io.rancher.scheduler.affinity:container_label_ne: io.rancher.stack_service.name=$${stack_name}/$${service_name}
+    environment:
+      kong-dashboard-pass: admin
+      kong-dashboard-pass: ${kong_dashboard_admin_password}
     depends_on:
       - proxy
   lb-internal:

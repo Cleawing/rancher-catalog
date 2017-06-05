@@ -1,9 +1,9 @@
 .catalog:
   name: Kong
-  version: 0.10.3-6
+  version: 0.10.3-8
   description: |
     The open-source API Gateway and Microservices Management Layer, delivering high performance and reliability.
-  uuid: kong-0.10.3-6
+  uuid: kong-0.10.3-8
   questions:
     - variable: affinity_label
       label: |
@@ -26,13 +26,13 @@
         Password is used for Basic Auth on Kong Dashboard
       type: password
       required: true
-    - variable: kong_admin_api_hostname
-      label: Kong Admin API Hostname
-      description: |
-        Determines which hostname should be pointed to Kong API.
-      type: string
-      default: kong-admin
-      required: true
+    # - variable: kong_admin_api_hostname
+    #   label: Kong Admin API Hostname
+    #   description: |
+    #     Determines which hostname should be pointed to Kong API.
+    #   type: string
+    #   default: kong-admin
+    #   required: true
     - variable: database_service
       label: Database Service
       description: |
@@ -40,7 +40,7 @@
       type: service
       required: true
     - variable: KONG_DATABASE
-      label: Database
+      label: Database Type
       description: |
         Determines which of PostgreSQL or Cassandra this node will use as its datastore.
       type: enum
@@ -55,19 +55,19 @@
       default: kong_pg_password
       required: true
     - variable: KONG_PG_USER
-      label: PG User
+      label: Postgres User
       description: Postgres user.
       type: string
       default: kong
       required: true
     - variable: KONG_PG_DATABASE
-      label: PG Database
+      label: Postgres Database Name
       description: Database to connect to. Must exist.
       type: string
       default: kong
       required: true
     - variable: KONG_PG_PORT
-      label: PG Port
+      label: Postgres Port
       description: Port of the Postgres server.
       type: int
       default: 5432
@@ -182,7 +182,7 @@
     # - variable: client_ssl
     # - variable: client_ssl_cert
     # - variable: client_ssl_cert_key
-    - variable: ADMIN_SSL
+    - variable: KONG_ADMIN_SSL
       label: Admin SSL
       description: |
         Determines if Nginx should be listening for HTTPS traffic on the admin_listen_ssl address. If disabled, Nginx will only bind itself on admin_listen, and all SSL settings will be ignored.
@@ -284,6 +284,12 @@ services:
         service: lb-internal
         source_port: 80
         target_port: 8000
+      - hostname: #{kong_dashboard_hostname}
+        priority: 3
+        protocol: http
+        service: lb-internal
+        source_port: 80
+        target_port: 8080
     health_check:
       healthy_threshold: 2
       response_timeout: 2000
