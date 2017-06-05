@@ -1,9 +1,9 @@
 .catalog:
   name: Kong
-  version: 0.10.3-0
+  version: 0.10.3-5
   description: |
     The open-source API Gateway and Microservices Management Layer, delivering high performance and reliability.
-  uuid: kong-0.10.3-0
+  uuid: kong-0.10.3-5
   questions:
     - variable: affinity_label
       label: |
@@ -14,11 +14,24 @@
       required: true
       default: "kong=enabled"
     - variable: kong_dashboard_hostname
-      label: Dashboard hostname
+      label: Kong Dashboard Hostname
       description: |
         Determines which hostname should be pointed to Kong Dashboard UI.
       type: string
       default: kong-dashboard
+      required: true
+    - variable: kong_dashboard_admin_password
+      label: Kond Dashboard Admin Password
+      description: |
+        Password is used for Basic Auth on Kong Dashboard
+      type: password
+      required: true
+    - variable: kong_admin_api_hostname
+      label: Kong Admin API Hostname
+      description: |
+        Determines which hostname should be pointed to Kong API.
+      type: string
+      default: kong-admin
       required: true
     - variable: database_service
       label: Database Service
@@ -35,11 +48,11 @@
         - postgres
         - cassandra
       default: postgres
-    - variable: KONG_PG_PORT
-      label: PG Port
-      description: Port of the Postgres server.
-      type: int
-      default: 5432
+    - variable: kong_pg_password_secret
+      label: Postgres Password as Rancher Secret Key
+      description: Name of Rancher secret key treated as Postgres database password
+      type: string
+      default: kong_pg_password
       required: true
     - variable: KONG_PG_USER
       label: PG User
@@ -47,16 +60,17 @@
       type: string
       default: kong
       required: true
-    - variable: KONG_PG_PASSWORD
-      label: PG Password
-      description: Postgres user's password.
-      type: string
-      required: true
     - variable: KONG_PG_DATABASE
       label: PG Database
       description: Database to connect to. Must exist.
       type: string
       default: kong
+      required: true
+    - variable: KONG_PG_PORT
+      label: PG Port
+      description: Port of the Postgres server.
+      type: int
+      default: 5432
       required: true
     # - variable: KONG_CLUSTER_ENCRYPT_KEY
     #   label: Cluster Encrypt Key
