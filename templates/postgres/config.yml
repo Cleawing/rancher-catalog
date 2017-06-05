@@ -1,5 +1,5 @@
 name: PostgreSQL
 description: |
   PostgreSQL server stack for simple one-node setup.
-version: 9.6.3-1
+version: 9.6.3-0
 category: Database

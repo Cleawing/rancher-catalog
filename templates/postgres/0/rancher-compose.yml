@@ -1,9 +1,9 @@
 .catalog:
   name: PostgreSQL
-  version: 9.6.3-1
+  version: 9.6.3-0
   description: |
     PostgreSQL server stack for simple one-node setup.
-  uuid: postgres-9.6.3-1
+  uuid: postgres-9.6.3-0
   questions:
     - variable: affinity_label
       label: Affinity label

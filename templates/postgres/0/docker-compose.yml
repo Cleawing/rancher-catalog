@@ -15,8 +15,8 @@ services:
 
   data-volume:
     image: busybox
-      labels:
-        io.rancher.container.start_once: true
-        io.rancher.container.hostname_override: container_name
-      entrypoint: /bin/true
-      network_mode: none
+    labels:
+      io.rancher.container.start_once: true
+      io.rancher.container.hostname_override: container_name
+    entrypoint: /bin/true
+    network_mode: none

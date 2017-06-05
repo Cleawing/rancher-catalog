@@ -1,7 +1,7 @@
 version: '2'
 services:
   proxy:
-    image: kong:0.10.3
+    image: cleawing/kong:0.10.3
     labels:
       io.rancher.scheduler.global: 'true'
       io.rancher.container.hostname_override: container_name
@@ -15,6 +15,7 @@ services:
       KONG_PG_USER: ${KONG_PG_USER}
       KONG_PG_PASSWORD: ${KONG_PG_PASSWORD}
       KONG_PG_DATABASE: ${KONG_PG_DATABASE}
+      KONG_CLUSTER_TTL_ON_FAILURE: ${KONG_CLUSTER_TTL_ON_FAILURE}
       KONG_LOG_LEVEL: ${KONG_LOG_LEVEL}
       KONG_ANONYMOUS_REPORTS: ${KONG_ANONYMOUS_REPORTS}
       KONG_PROXY_LISTEN: ${KONG_PROXY_LISTEN}
@@ -43,7 +44,7 @@ services:
     - 8001:8001/tcp
     - 8080:8080/tcp
     labels:
-      io.rancher.scheduler.affinity:host_label: ${affinity_label}
+      io.rancher.scheduler.affinity:host_label: kong=enabled
       io.rancher.container.agent.role: environmentAdmin
       io.rancher.container.create_agent: 'true'
       io.rancher.scheduler.global: 'true'
@@ -52,7 +53,7 @@ services:
     ports:
     - 80:80/tcp
     labels:
-      io.rancher.scheduler.affinity:host_label: ${affinity_label}
+      io.rancher.scheduler.affinity:host_label: kong=enabled
       io.rancher.container.agent.role: environmentAdmin
       io.rancher.container.create_agent: 'true'
       io.rancher.scheduler.global: 'true'

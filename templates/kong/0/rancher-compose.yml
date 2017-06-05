@@ -58,6 +58,19 @@
       type: string
       default: kong
       required: true
+    # - variable: KONG_CLUSTER_ENCRYPT_KEY
+    #   label: Cluster Encrypt Key
+    #   description: Base64-encoded 16-bytes key to encrypt cluster traffic with.
+    #   type: string
+    - variable: KONG_CLUSTER_TTL_ON_FAILURE
+      label: Cluster TTL On Failure
+      description: |
+        Time to live (in seconds) of a node in the cluster when it stops sending healthcheck pings, possibly caused by a node or network failure. If a node is not able to send a new healthcheck ping before the expiration, other nodes in the cluster will stop attempting to connect to it.
+
+        Recommended to be at least 60.
+      type: int
+      default: 300
+      required: true
     # - variable: pg_ssl
     # - variable: pg_ssl_verify
     - variable: KONG_LOG_LEVEL
@@ -252,17 +265,17 @@ services:
     lb_config:
       certs: []
       port_rules:
-      - hostname: ${kong_dashboard_hostname}
-        priority: 1
+      - priority: 2
         protocol: http
-        service: ui
+        service: lb-internal
         source_port: 80
-        target_port: 8080
+        target_port: 8000
     health_check:
-      response_timeout: 2000
       healthy_threshold: 2
+      response_timeout: 2000
       port: 42
       unhealthy_threshold: 3
       initializing_timeout: 60000
       interval: 2000
+      strategy: recreate
       reinitializing_timeout: 60000
