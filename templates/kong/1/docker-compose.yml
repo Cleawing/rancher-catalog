@@ -2,43 +2,42 @@ version: '2'
 services:
   proxy:
     image: cleawing/kong:0.10.3
+    command: kong start --vv
     labels:
-      io.rancher.scheduler.global: 'true'
+      io.rancher.scheduler.global: true
       io.rancher.container.pull_image: always
       io.rancher.container.hostname_override: container_name
-      io.rancher.scheduler.affinity:host_label: ${affinity_label}
+      io.rancher.scheduler.affinity:host_label: ${AFFINITY_LABEL}
     external_links:
-      - ${database_service}:database
+      - ${KONG_DATABASE_SERVICE_LINK}:database
     secrets:
-      - ${kong_pg_password_secret_key}
+      - ${KONG_PG_PASSWORD_SECRET_KEY}
     environment:
-      API_KONG_DASHBOARD_HOSTNAME: ${kong_dashboard_hostname}
-      API_KONG_ADMIN_API_HOSTNAME: ${kong_admin_api_hostname}
       KONG_DATABASE: ${KONG_DATABASE}
       KONG_PG_HOST: database
       KONG_PG_PORT: ${KONG_PG_PORT}
       KONG_PG_USER: ${KONG_PG_USER}
-      KONG_PG_PASSWORD_FILE: /run/secrets/${kong_pg_password_secret_key}
+      KONG_PG_PASSWORD_FILE: /run/secrets/${KONG_PG_PASSWORD_SECRET_KEY}
       KONG_PG_DATABASE: ${KONG_PG_DATABASE}
       KONG_CLUSTER_TTL_ON_FAILURE: ${KONG_CLUSTER_TTL_ON_FAILURE}
       KONG_LOG_LEVEL: ${KONG_LOG_LEVEL}
       KONG_ANONYMOUS_REPORTS: ${KONG_ANONYMOUS_REPORTS}
-      KONG_PROXY_LISTEN: ${KONG_PROXY_LISTEN}
-      KONG_ADMIN_LISTEN: ${KONG_ADMIN_LISTEN}
       KONG_NGINX_WORKER_PROCESSES: ${KONG_NGINX_WORKER_PROCESSES}
       KONG_MEM_CACHE_SIZE: ${KONG_MEM_CACHE_SIZE}
       KONG_UPSTREAM_KEEPALIVE: ${KONG_UPSTREAM_KEEPALIVE}
       KONG_SERVER_TOKENS: ${KONG_SERVER_TOKENS}
       KONG_LATENCY_TOKENS: ${KONG_LATENCY_TOKENS}
+      KONG_SSL: 'off'
+      KONG_ADMIN_SSL: 'off'
   ui:
     image: pgbi/kong-dashboard:v2.1.1
     labels:
       io.rancher.container.hostname_override: container_name
-      io.rancher.scheduler.affinity:host_label: ${affinity_label}
+      io.rancher.scheduler.affinity:host_label: ${AFFINITY_LABEL}
       io.rancher.scheduler.affinity:container_label_ne: io.rancher.stack_service.name=$${stack_name}/$${service_name}
     environment:
-      kong-dashboard-name: ${kong_dashboard_admin_name}
-      kong-dashboard-pass: ${kong_dashboard_admin_password}
+      kong-dashboard-name: ${KONG_DASHBOARD_ADMIN_NAME}
+      kong-dashboard-pass: ${KONG_DASHBOARD_ADMIN_PASSWORD}
     depends_on:
       - proxy
   lb-internal:
@@ -48,16 +47,16 @@ services:
     - 8001:8001/tcp
     - 8080:8080/tcp
     labels:
-      io.rancher.scheduler.affinity:host_label: kong=enabled
+      io.rancher.scheduler.affinity:host_label: ${AFFINITY_LABEL}
       io.rancher.container.agent.role: environmentAdmin
-      io.rancher.container.create_agent: 'true'
-      io.rancher.scheduler.global: 'true'
+      io.rancher.container.create_agent: true
+      io.rancher.scheduler.global: true
   lb-external:
     image: rancher/lb-service-haproxy:v0.7.1
     ports:
     - 80:80/tcp
     labels:
-      io.rancher.scheduler.affinity:host_label: kong=enabled
+      io.rancher.scheduler.affinity:host_label: ${AFFINITY_LABEL}
       io.rancher.container.agent.role: environmentAdmin
-      io.rancher.container.create_agent: 'true'
-      io.rancher.scheduler.global: 'true'
+      io.rancher.container.create_agent: true
+      io.rancher.scheduler.global: true

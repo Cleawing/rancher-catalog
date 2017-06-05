@@ -1,11 +1,11 @@
 .catalog:
   name: Kong
-  version: 0.10.3-12
+  version: 0.10.3-0
   description: |
     The open-source API Gateway and Microservices Management Layer, delivering high performance and reliability.
-  uuid: kong-0.10.3-12
+  uuid: kong-0.10.3-0
   questions:
-    - variable: affinity_label
+    - variable: AFFINITY_LABEL
       label: |
         Affinity label
       description: |
@@ -13,35 +13,28 @@
       type: string
       required: true
       default: "kong=enabled"
-    - variable: kong_dashboard_hostname
+    - variable: KONG_DASHBOARD_HOSTNAME
       label: Kong Dashboard Hostname
       description: |
         Determines which hostname should be pointed to Kong Dashboard UI.
       type: string
       default: kong-dashboard
       required: true
-    - variable: kong_dashboard_admin_name
+    - variable: KONG_DASHBOARD_ADMIN_NAME
       label: Kond Dashboard Admin Name
       description: |
         Name is used for Basic Auth on Kong Dashboard
       type: string
       default: admin
       required: true
-    - variable: kong_dashboard_admin_password
+    - variable: KONG_DASHBOARD_ADMIN_PASSWORD
       label: Kond Dashboard Admin Password
       description: |
         Password is used for Basic Auth on Kong Dashboard
       type: password
       required: true
-    # - variable: kong_admin_api_hostname
-    #   label: Kong Admin API Hostname
-    #   description: |
-    #     Determines which hostname should be pointed to Kong API.
-    #   type: string
-    #   default: kong-admin
-    #   required: true
-    - variable: database_service
-      label: Database Service
+    - variable: KONG_DATABASE_SERVICE_LINK
+      label: Ling to Database Service
       description: |
         Rancher service which serve as Postgres or Cassandra server
       type: service
@@ -55,7 +48,7 @@
         - postgres
         - cassandra
       default: postgres
-    - variable: kong_pg_password_secret_key
+    - variable: KONG_PG_PASSWORD_SECRET_KEY
       label: Postgres Password as Rancher Secret Key
       description: Name of Rancher secret key treated as Postgres database password
       type: string
@@ -117,34 +110,6 @@
         - "on"
         - "off"
       default: "on"
-    - variable: KONG_PROXY_LISTEN
-      label: Proxy Listen
-      description: |
-        Address and port on which Kong will accept HTTP requests. This is the public-facing entrypoint of Kong, to which your consumers will make requests to.
-      type: string
-      default: 0.0.0.0:8000
-      required: true
-    - variable: KONG_PROXY_LISTEN_SSL
-      label: Proxy Listen SSL
-      description: |
-        Address and port on which Kong will accept HTTPS requests if ssl is enabled.
-      type: string
-      default: 0.0.0.0:8443
-      required: true
-    - variable: KONG_ADMIN_LISTEN
-      label: Admin Listen
-      description: |
-        Address and port on which Kong will expose an entrypoint to the Admin API. This API lets you configure and manage Kong, and should be kept private and secured.
-      type: string
-      default: 0.0.0.0:8001
-      required: true
-    - variable: KONG_ADMIN_LISTEN_SSL
-      label: Admin Listen SSL
-      description: |
-        Address and port on which Kong will accept HTTPS requests to the Admin API if admin_ssl is enabled.
-      type: string
-      default: 0.0.0.0:8443
-      required: true
     - variable: KONG_NGINX_WORKER_PROCESSES
       label: Nginx Worker Processes
       description: Determines the number of worker processes spawned by Nginx.
@@ -158,48 +123,6 @@
       type: string
       default: 128m
       required: true
-    - variable: KONG_SSL
-      label: SSL
-      description: |
-        Determines if Nginx should be listening for HTTPS traffic on the proxy_listen_ssl address. If disabled, Nginx will only bind itself on proxy_listen, and all SSL settings will be ignored.
-      type: enum
-      options:
-        - "on"
-        - "off"
-      default: "off"
-    - variable: KONG_SSL_CIPHER_SUITE
-      label: SSL Cipher Suite
-      description: |
-        Defines the TLS ciphers served by Nginx.
-      type: enum
-      options:
-        - modern
-        - intermediate
-        - old
-        - custom
-      default: modern
-    - variable: KONG_SSL_CIPHERS
-      label: SSL Ciphers
-      description: |
-        Defines a custom list of TLS ciphers to be served by Nginx. This list must conform to the pattern defined by openssl ciphers. This value is ignored if ssl_cipher_suite is not custom.
-      type: string
-      default: none
-    # - variable: ssl_cert
-    # - variable: ssl_cert_key
-    # - variable: client_ssl
-    # - variable: client_ssl_cert
-    # - variable: client_ssl_cert_key
-    - variable: KONG_ADMIN_SSL
-      label: Admin SSL
-      description: |
-        Determines if Nginx should be listening for HTTPS traffic on the admin_listen_ssl address. If disabled, Nginx will only bind itself on admin_listen, and all SSL settings will be ignored.
-      type: enum
-      options:
-        - "on"
-        - "off"
-      default: "off"
-    # - variable: admin_ssl_cert
-    # - variable: admin_ssl_cert_key
     - variable: KONG_UPSTREAM_KEEPALIVE
       label: Upstream Keepalive
       description: |
@@ -291,7 +214,7 @@ services:
         service: lb-internal
         source_port: 80
         target_port: 8000
-      - hostname: ${kong_dashboard_hostname}
+      - hostname: ${KONG_DASHBOARD_HOSTNAME}
         priority: 3
         protocol: http
         service: lb-internal
