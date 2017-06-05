@@ -22,8 +22,6 @@ services:
       KONG_CLUSTER_TTL_ON_FAILURE: ${KONG_CLUSTER_TTL_ON_FAILURE}
       KONG_LOG_LEVEL: ${KONG_LOG_LEVEL}
       KONG_ANONYMOUS_REPORTS: ${KONG_ANONYMOUS_REPORTS}
-      KONG_PROXY_LISTEN: ${KONG_PROXY_LISTEN}
-      KONG_ADMIN_LISTEN: ${KONG_ADMIN_LISTEN}
       KONG_NGINX_WORKER_PROCESSES: ${KONG_NGINX_WORKER_PROCESSES}
       KONG_MEM_CACHE_SIZE: ${KONG_MEM_CACHE_SIZE}
       KONG_UPSTREAM_KEEPALIVE: ${KONG_UPSTREAM_KEEPALIVE}
@@ -39,7 +37,7 @@ services:
       io.rancher.scheduler.affinity:container_label_ne: io.rancher.stack_service.name=$${stack_name}/$${service_name}
     environment:
       kong-dashboard-name: ${KONG_DASHBOARD_ADMIN_NAME}
-      kong-dashboard-pass: ${KONG_DASHBOARD_ADMIN_PASSWORD}
+      kong-dashboard-pass: '${KONG_DASHBOARD_ADMIN_PASSWORD}'
     depends_on:
       - proxy
   lb-internal:
@@ -57,6 +55,8 @@ services:
     image: rancher/lb-service-haproxy:v0.7.1
     ports:
     - 80:80/tcp
+    depends_on:
+      - lb-internal
     labels:
       io.rancher.scheduler.affinity:host_label: ${AFFINITY_LABEL}
       io.rancher.container.agent.role: environmentAdmin

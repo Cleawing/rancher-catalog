@@ -34,7 +34,7 @@
       type: password
       required: true
     - variable: KONG_DATABASE_SERVICE_LINK
-      label: Ling to Database Service
+      label: Link to Database Service
       description: |
         Rancher service which serve as Postgres or Cassandra server
       type: service
