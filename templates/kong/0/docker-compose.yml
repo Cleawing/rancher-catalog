@@ -31,6 +31,9 @@ services:
       KONG_ADMIN_SSL: 'off'
   dashboard:
     image: pgbi/kong-dashboard:v2.1.1
+    mem_limit: 100663296
+    mem_reservation: 67108864
+    cpu_shares: 256
     labels:
       io.rancher.scheduler.global: true
       io.rancher.container.hostname_override: container_name
