@@ -1,0 +1,66 @@
+version: '2'
+services:
+  proxy:
+    image: cleawing/kong:0.10.3
+    command: kong start --vv
+    labels:
+      io.rancher.scheduler.global: true
+      io.rancher.container.pull_image: always
+      io.rancher.container.hostname_override: container_name
+      io.rancher.scheduler.affinity:host_label: ${PROXY_AFFINITY_LABEL}
+    external_links:
+      - ${KONG_DATABASE_SERVICE_LINK}:database
+    secrets:
+      - ${KONG_PG_PASSWORD_SECRET_KEY}
+    environment:
+      KONG_DATABASE: ${KONG_DATABASE}
+      KONG_PG_HOST: database
+      KONG_PG_PORT: ${KONG_PG_PORT}
+      KONG_PG_USER: ${KONG_PG_USER}
+      KONG_PG_PASSWORD_FILE: /run/secrets/${KONG_PG_PASSWORD_SECRET_KEY}
+      KONG_PG_DATABASE: ${KONG_PG_DATABASE}
+      KONG_CLUSTER_TTL_ON_FAILURE: ${KONG_CLUSTER_TTL_ON_FAILURE}
+      KONG_LOG_LEVEL: ${KONG_LOG_LEVEL}
+      KONG_ANONYMOUS_REPORTS: ${KONG_ANONYMOUS_REPORTS}
+      KONG_NGINX_WORKER_PROCESSES: ${KONG_NGINX_WORKER_PROCESSES}
+      KONG_MEM_CACHE_SIZE: ${KONG_MEM_CACHE_SIZE}
+      KONG_UPSTREAM_KEEPALIVE: ${KONG_UPSTREAM_KEEPALIVE}
+      KONG_SERVER_TOKENS: ${KONG_SERVER_TOKENS}
+      KONG_LATENCY_TOKENS: ${KONG_LATENCY_TOKENS}
+      KONG_SSL: 'off'
+      KONG_ADMIN_SSL: 'off'
+  ui:
+    image: pgbi/kong-dashboard:v2.1.1
+    labels:
+      io.rancher.scheduler.global: true
+      io.rancher.container.hostname_override: container_name
+      io.rancher.scheduler.affinity:host_label: ${DASHBOARD_AFFINITY_LABEL}
+    environment:
+      kong-dashboard-name: ${KONG_DASHBOARD_ADMIN_NAME}
+      kong-dashboard-pass: '${KONG_DASHBOARD_ADMIN_PASSWORD}'
+    depends_on:
+      - proxy
+  lb-internal:
+    image: rancher/lb-service-haproxy:v0.7.1
+    expose:
+    - 8000:8000/tcp
+    - 8001:8001/tcp
+    - 8080:8080/tcp
+    labels:
+      io.rancher.scheduler.global: true
+      io.rancher.scheduler.affinity:host_label: ${LB_INTERNAL_AFFINITY_LABEL}
+      io.rancher.container.agent.role: environmentAdmin
+      io.rancher.container.create_agent: true
+      io.rancher.scheduler.global: true
+  lb-external:
+    image: rancher/lb-service-haproxy:v0.7.1
+    ports:
+    - 80:80/tcp
+    depends_on:
+      - lb-internal
+    labels:
+      io.rancher.scheduler.global: true
+      io.rancher.scheduler.affinity:host_label: ${LB_EXTERNAL_AFFINITY_LABEL}
+      io.rancher.container.agent.role: environmentAdmin
+      io.rancher.container.create_agent: true
+      io.rancher.scheduler.global: true
