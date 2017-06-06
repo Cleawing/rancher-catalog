@@ -7,7 +7,7 @@ services:
       io.rancher.scheduler.global: true
       io.rancher.container.pull_image: always
       io.rancher.container.hostname_override: container_name
-      io.rancher.scheduler.affinity:host_label: ${AFFINITY_LABEL}
+      io.rancher.scheduler.affinity:host_label: ${PROXY_AFFINITY_LABEL}
     external_links:
       - ${KONG_DATABASE_SERVICE_LINK}:database
     secrets:
@@ -29,36 +29,41 @@ services:
       KONG_LATENCY_TOKENS: ${KONG_LATENCY_TOKENS}
       KONG_SSL: 'off'
       KONG_ADMIN_SSL: 'off'
-  ui:
+  dashboard:
     image: pgbi/kong-dashboard:v2.1.1
     labels:
+      io.rancher.scheduler.global: true
       io.rancher.container.hostname_override: container_name
-      io.rancher.scheduler.affinity:host_label: ${AFFINITY_LABEL}
-      io.rancher.scheduler.affinity:container_label_ne: io.rancher.stack_service.name=$${stack_name}/$${service_name}
+      io.rancher.scheduler.affinity:host_label: ${DASHBOARD_AFFINITY_LABEL}
     environment:
       kong-dashboard-name: ${KONG_DASHBOARD_ADMIN_NAME}
       kong-dashboard-pass: '${KONG_DASHBOARD_ADMIN_PASSWORD}'
-    depends_on:
-      - proxy
+    links:
+      - proxy:proxy
   lb-internal:
     image: rancher/lb-service-haproxy:v0.7.1
     expose:
-    - 8000:8000/tcp
-    - 8001:8001/tcp
-    - 8080:8080/tcp
+      - 8000:8000/tcp
+      - 8001:8001/tcp
+      - 8080:8080/tcp
+    links:
+      - proxy:proxy
+      - dashboard:dashboard
     labels:
-      io.rancher.scheduler.affinity:host_label: ${AFFINITY_LABEL}
+      io.rancher.scheduler.global: true
+      io.rancher.scheduler.affinity:host_label: ${LB_INTERNAL_AFFINITY_LABEL}
       io.rancher.container.agent.role: environmentAdmin
       io.rancher.container.create_agent: true
       io.rancher.scheduler.global: true
   lb-external:
     image: rancher/lb-service-haproxy:v0.7.1
     ports:
-    - 80:80/tcp
-    depends_on:
-      - lb-internal
+      - 80:80/tcp
+    links:
+      - lb-internal:lb-internal
     labels:
-      io.rancher.scheduler.affinity:host_label: ${AFFINITY_LABEL}
+      io.rancher.scheduler.global: true
+      io.rancher.scheduler.affinity:host_label: ${LB_EXTERNAL_AFFINITY_LABEL}
       io.rancher.container.agent.role: environmentAdmin
       io.rancher.container.create_agent: true
       io.rancher.scheduler.global: true

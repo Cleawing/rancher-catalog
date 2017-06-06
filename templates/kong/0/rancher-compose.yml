@@ -5,11 +5,35 @@
     The open-source API Gateway and Microservices Management Layer, delivering high performance and reliability.
   uuid: kong-0.10.3-0
   questions:
-    - variable: AFFINITY_LABEL
+    - variable: PROXY_AFFINITY_LABEL
       label: |
-        Affinity label
+        Kong Proxy Affinity label
       description: |
-        Rancher host label which using for affinity in scheduling.
+        Rancher host label which using for affinity in scheduling Kong Proxy instances.
+      type: string
+      required: true
+      default: "kong=enabled"
+    - variable: DASHBOARD_AFFINITY_LABEL
+      label: |
+        Kong Dashboard Affinity label
+      description: |
+        Rancher host label which using for affinity in scheduling Kong Dashboard instances.
+      type: string
+      required: true
+      default: "kong=enabled"
+    - variable: LB_EXTERNAL_AFFINITY_LABEL
+      label: |
+        LB External Affinity label
+      description: |
+        Rancher host label which using for affinity in scheduling LB external instances.
+      type: string
+      required: true
+      default: "kong=enabled"
+    - variable: LB_INTERNAL_AFFINITY_LABEL
+      label: |
+        LB Internal Affinity label
+      description: |
+        Rancher host label which using for affinity in scheduling LB internal instances.
       type: string
       required: true
       default: "kong=enabled"
@@ -163,8 +187,7 @@ services:
       interval: 2000
       strategy: recreate
       reinitializing_timeout: 15000
-  ui:
-    scale: 2
+  dashboard:
     retain_ip: true
     start_on_create: true
     health_check:
@@ -194,7 +217,7 @@ services:
         target_port: 8001
       - priority: 3
         protocol: http
-        service: ui
+        service: dashboard
         source_port: 8080
         target_port: 8080
     health_check:
