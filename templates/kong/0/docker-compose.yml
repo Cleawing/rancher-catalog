@@ -3,6 +3,7 @@ services:
   proxy:
     image: cleawing/kong:0.10.3
     command: kong start --vv
+    cpu_shares: 1536
     labels:
       io.rancher.scheduler.global: true
       io.rancher.container.pull_image: always
@@ -45,6 +46,9 @@ services:
       - proxy:proxy
   lb-internal:
     image: rancher/lb-service-haproxy:v0.7.1
+    mem_limit: 134217728
+    mem_reservation: 67108864
+    cpu_shares: 512
     expose:
       - 8000:8000/tcp
       - 8001:8001/tcp
@@ -60,6 +64,9 @@ services:
       io.rancher.scheduler.global: true
   lb-external:
     image: rancher/lb-service-haproxy:v0.7.1
+    mem_limit: 134217728
+    mem_reservation: 67108864
+    cpu_shares: 512
     ports:
       - 80:80/tcp
     links:
