@@ -7,7 +7,7 @@
   questions:
     - variable: PROXY_AFFINITY_LABEL
       label: |
-        Kong proxy Affinity label
+        Kong Proxy Affinity label
       description: |
         Rancher host label which using for affinity in scheduling Kong Proxy instances.
       type: string
@@ -187,7 +187,7 @@ services:
       interval: 2000
       strategy: recreate
       reinitializing_timeout: 15000
-  ui:
+  dashboard:
     retain_ip: true
     start_on_create: true
     health_check:
@@ -217,7 +217,7 @@ services:
         target_port: 8001
       - priority: 3
         protocol: http
-        service: ui
+        service: dashboard
         source_port: 8080
         target_port: 8080
     health_check:

@@ -29,7 +29,7 @@ services:
       KONG_LATENCY_TOKENS: ${KONG_LATENCY_TOKENS}
       KONG_SSL: 'off'
       KONG_ADMIN_SSL: 'off'
-  ui:
+  dashboard:
     image: pgbi/kong-dashboard:v2.1.1
     labels:
       io.rancher.scheduler.global: true
