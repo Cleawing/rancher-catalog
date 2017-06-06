@@ -165,6 +165,7 @@ services:
       reinitializing_timeout: 15000
   ui:
     scale: 2
+    retain_ip: true
     start_on_create: true
     health_check:
       healthy_threshold: 2
@@ -176,6 +177,7 @@ services:
       strategy: recreate
       reinitializing_timeout: 5000
   lb-internal:
+    retain_ip: true
     start_on_create: true
     lb_config:
       certs: []
@@ -205,6 +207,7 @@ services:
       strategy: recreate
       reinitializing_timeout: 60000
   lb-external:
+    retain_ip: true
     start_on_create: true
     lb_config:
       certs: []
